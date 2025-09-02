@@ -16,6 +16,7 @@ import { auth } from "@/firebase/firebaseConfig";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { useRouter } from "expo-router";
 import NavigationBarManager from "./NavigationBarManager";
+import { NetworkProvider } from "../utils/NetworkProvider";
 const { width } = Dimensions.get("window");
 
 const ForgotPassword = () => {
@@ -42,7 +43,7 @@ const ForgotPassword = () => {
   };
 
   return (
-    <>
+       <NetworkProvider>
       <StatusBar backgroundColor="black" barStyle="light-content" />
       <NavigationBarManager />
       <KeyboardAvoidingView
@@ -89,7 +90,7 @@ const ForgotPassword = () => {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-    </>
+     </NetworkProvider>
   );
 };
 

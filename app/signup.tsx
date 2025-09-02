@@ -24,6 +24,7 @@ import { auth, db } from "../firebase/firebaseConfig";
 import { setDoc, doc } from "firebase/firestore";
 import { RFValue } from "react-native-responsive-fontsize";
 import { useFocusEffect } from "@react-navigation/native";
+import { NetworkProvider } from "./utils/NetworkProvider";
 
 const { width } = Dimensions.get("window");
 
@@ -118,6 +119,7 @@ const Signup = () => {
   };
 
   return (
+    <NetworkProvider>
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={{ flex: 1 }}
@@ -238,6 +240,7 @@ const Signup = () => {
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
+    </NetworkProvider>
   );
 };
 

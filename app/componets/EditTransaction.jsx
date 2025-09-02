@@ -11,6 +11,7 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   Dimensions,
+  StatusBar,
 } from "react-native";
 
 import React, { useCallback, useState } from "react";
@@ -19,17 +20,17 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter, useLocalSearchParams } from "expo-router";
 
-import { collection, addDoc, doc, updateDoc } from "firebase/firestore";
+import { doc, updateDoc } from "firebase/firestore";
 import { auth, db } from "../../firebase/firebaseConfig";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useFocusEffect} from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import NavigationBarManager from "../componets/NavigationBarManager";
+import { NetworkProvider } from '../utils/NetworkProvider'
 
 const { width, height } = Dimensions.get("window");
 
 const EditTransaction = () => {
   const router = useRouter();
-  const navigation = useNavigation();
   const { trans } = useLocalSearchParams();
   const expenseData = JSON.parse(trans);
 
@@ -107,7 +108,6 @@ const EditTransaction = () => {
 
       Alert.alert("Success", "Transaction updated successfully!");
       router.push("/tabs/transaction");
-      // ✅ Correct tab name (case-sensitive)
     } catch (error) {
       console.error("Error updating document: ", error);
       Alert.alert("Error", "Something went wrong while updating.");
@@ -115,7 +115,9 @@ const EditTransaction = () => {
   };
 
   return (
+    <NetworkProvider>
     <SafeAreaView style={{ flex: 1,backgroundColor:'white'}}>
+      <StatusBar backgroundColor="black" barStyle="light-content" />
       <NavigationBarManager />
 
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -224,6 +226,7 @@ const EditTransaction = () => {
         </KeyboardAvoidingView>
       </TouchableWithoutFeedback>
     </SafeAreaView>
+    </NetworkProvider>
   );
 };
 

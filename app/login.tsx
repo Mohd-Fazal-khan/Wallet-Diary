@@ -21,6 +21,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
 import { RFValue } from "react-native-responsive-fontsize";
 import { useFocusEffect } from "@react-navigation/native";
+import { NetworkProvider } from "./utils/NetworkProvider";
 
 export const options = {
   animation: "none",
@@ -74,6 +75,7 @@ const Login = () => {
   };
 
   return (
+    <NetworkProvider>
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={{ flex: 1 }}
@@ -184,6 +186,7 @@ const Login = () => {
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
+    </NetworkProvider>
   );
 };
 

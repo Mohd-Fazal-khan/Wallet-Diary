@@ -21,6 +21,7 @@ import { updateProfile } from "firebase/auth";
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
 import NavigationBarManager from "./NavigationBarManager";
+import { NetworkProvider } from "../utils/NetworkProvider";
 
 const { width } = Dimensions.get("window");
 
@@ -136,6 +137,9 @@ useEffect(() => {
   };
 
   return (
+     <NetworkProvider>
+
+  
     <SafeAreaView style={{ flex: 1, backgroundColor: "#f0f4f8" }}>
       <StatusBar backgroundColor="black" barStyle="light-content" />
       <NavigationBarManager />
@@ -189,6 +193,7 @@ useEffect(() => {
         </View>
       </ScrollView>
     </SafeAreaView>
+       </NetworkProvider>
   );
 };
 

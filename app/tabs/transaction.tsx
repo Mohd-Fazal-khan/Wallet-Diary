@@ -201,13 +201,7 @@ const Transaction = () => {
                         adjustsFontSizeToFit
                         numberOfLines={1}
                       >
-                        {item.createdAt
-                          ? dayjs(
-                              item.createdAt.seconds
-                                ? new Date(item.createdAt.seconds * 1000)
-                                : new Date(item.createdAt)
-                            ).format("DD MMM, HH:mm")
-                          : "No date"}
+                        
                       </Text>
                     </View>
                   </View>

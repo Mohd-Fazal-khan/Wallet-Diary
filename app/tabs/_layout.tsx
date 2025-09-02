@@ -1,10 +1,11 @@
 import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { StatusBar } from "react-native";
+import { NetworkProvider } from '../utils/NetworkProvider'
 
 export default function Layout() {
   return (
-    <>
+    <NetworkProvider>
       <StatusBar backgroundColor="black" barStyle="light-content" />
       <Tabs
         screenOptions={{
@@ -58,6 +59,6 @@ export default function Layout() {
           }}
         />
       </Tabs>
-    </>
+    </NetworkProvider>
   );
 }

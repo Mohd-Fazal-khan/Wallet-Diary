@@ -1,19 +1,33 @@
+import { auth, db } from "@/firebase/firebaseConfig";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
 import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  TouchableOpacity,
+  deleteUser,
+  EmailAuthProvider,
+  reauthenticateWithCredential,
+  signOut,
+} from "firebase/auth";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+} from "firebase/firestore";
+import React, { useEffect, useState } from "react";
+import {
   Alert,
   Dimensions,
+  Image,
+  Modal,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
-import React, { useEffect, useState } from "react";
-import { auth, db } from "@/firebase/firebaseConfig";
-import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { signOut } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
 import { SafeAreaView } from "react-native-safe-area-context";
 import NavigationBarManager from "../componets/NavigationBarManager";
 
@@ -25,6 +39,9 @@ const Profile = () => {
   const [username, setUsername] = useState(null);
   const [email, setEmail] = useState(null);
   const [profileImage, setProfileImage] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     const user = auth.currentUser;
@@ -63,10 +80,67 @@ const Profile = () => {
     }
   };
 
+  const deleteUserData = async (userId) => {
+    // Delete all expenses
+    const expensesSnapshot = await getDocs(
+      collection(db, "users", userId, "expenses")
+    );
+    for (const expenseDoc of expensesSnapshot.docs) {
+      await deleteDoc(doc(db, "users", userId, "expenses", expenseDoc.id));
+    }
+
+    // Delete all income
+    const incomeSnapshot = await getDocs(
+      collection(db, "users", userId, "income")
+    );
+    for (const incomeDoc of incomeSnapshot.docs) {
+      await deleteDoc(doc(db, "users", userId, "income", incomeDoc.id));
+    }
+
+    // Finally, delete the main user document
+    await deleteDoc(doc(db, "users", userId));
+  };
+
+  const handleDelete = async () => {
+    const user = auth.currentUser;
+
+    if (!user || !user.email) {
+      Alert.alert("Error", "No user is logged in.");
+      return;
+    }
+
+    if (!password) {
+      Alert.alert("Error", "Please enter your password.");
+      return;
+    }
+
+    const credential = EmailAuthProvider.credential(user.email, password);
+
+    try {
+      // Reauthenticate user
+      await reauthenticateWithCredential(user, credential);
+      await deleteUserData(user.uid); // deletes expenses, income, and user doc
+      await deleteUser(user);
+      Alert.alert("Success", "Your account has been deleted.");
+      router.replace("/login");
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Error", error.message);
+    } finally {
+      setModalVisible(false);
+      setPassword("");
+    }
+  };
+
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <NavigationBarManager />
-      <View style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={{ paddingBottom: width * 0.1 }}
+    >
+      <SafeAreaView style={{ flex: 1 }}>
+        <NavigationBarManager />
+
         <Text style={styles.title}>Settings</Text>
         <View style={styles.info}>
           <Image
@@ -108,6 +182,21 @@ const Profile = () => {
 
         <TouchableOpacity
           style={styles.editinfo}
+          onPress={() => router.push("/componets/about")}
+        >
+          <Ionicons
+            name="information-circle-outline"
+            size={width * 0.07}
+            color="#2d8bef"
+          />
+          <View style={styles.editcontainer}>
+            <Text style={styles.usertitle}>About</Text>
+            <Ionicons name="chevron-forward-outline" size={width * 0.04} />
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.editinfo}
           onPress={() => router.push("/componets/support")}
         >
           <Ionicons
@@ -123,15 +212,45 @@ const Profile = () => {
 
         <TouchableOpacity
           style={styles.editinfo}
-          onPress={() => router.push("/componets/about")}
+          onPress={() => router.push("/componets/TermsandCondition")}
         >
           <Ionicons
-            name="information-circle-outline"
+            name="document-text-outline"
             size={width * 0.07}
             color="#2d8bef"
           />
           <View style={styles.editcontainer}>
-            <Text style={styles.usertitle}>About</Text>
+            <Text style={styles.usertitle}>Terms & Conditions</Text>
+            <Ionicons name="chevron-forward-outline" size={width * 0.04} />
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.editinfo}
+          onPress={() => router.push("/componets/PrivacyPolicy")}
+        >
+          <MaterialCommunityIcons
+            name="shield-outline"
+            size={width * 0.07}
+            color="#2d8bef"
+          />
+          <View style={styles.editcontainer}>
+            <Text style={styles.usertitle}>Privacy Policy</Text>
+            <Ionicons name="chevron-forward-outline" size={width * 0.04} />
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.editinfo}
+          onPress={() => router.push("/componets/Disclaimer")}
+        >
+          <Ionicons
+            name="alert-circle-outline"
+            size={width * 0.07}
+            color="#2d8bef"
+          />
+          <View style={styles.editcontainer}>
+            <Text style={styles.usertitle}>Disclaimer</Text>
             <Ionicons name="chevron-forward-outline" size={width * 0.04} />
           </View>
         </TouchableOpacity>
@@ -140,8 +259,60 @@ const Profile = () => {
           <Ionicons name="log-out-outline" size={width * 0.06} color="red" />
           <Text style={styles.btntext}>Logout</Text>
         </TouchableOpacity>
-      </View>
-    </SafeAreaView>
+        <TouchableOpacity
+          style={styles.btn}
+          onPress={() => setModalVisible(true)}
+        >
+          <Ionicons name="log-out-outline" size={width * 0.06} color="red" />
+          <Text style={styles.btntext}>Delete Account</Text>
+        </TouchableOpacity>
+
+        {/* Password Modal */}
+        <Modal
+          visible={modalVisible}
+          animationType="slide"
+          transparent
+          onRequestClose={() => setModalVisible(false)}
+        >
+          <View style={styles.modalBackground}>
+            <View style={styles.modalContainer}>
+              <Text style={styles.modalTitle}>Enter your password</Text>
+             <View style={styles.passwordContainer}>
+                <TextInput
+                  placeholder="Password"
+                  secureTextEntry={!showPassword}
+                  value={password}
+                  onChangeText={setPassword}
+                 style={styles.passwordInput}
+                />
+                <TouchableOpacity
+                style={styles.eyeIcon}
+                  onPress={() => setShowPassword((prev) => !prev)}
+                >
+                  <Ionicons
+                    name={showPassword ? "eye-off-outline" : "eye-outline"}
+                    size={24}
+                    color="gray"
+                  />
+                </TouchableOpacity>
+              </View>
+              <TouchableOpacity
+                style={styles.confirmButton}
+                onPress={handleDelete}
+              >
+                <Text style={styles.confirmText}>Confirm Delete</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.cancelButton}
+                onPress={() => setModalVisible(false)}
+              >
+                <Text style={styles.cancelText}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+      </SafeAreaView>
+    </ScrollView>
   );
 };
 
@@ -217,4 +388,69 @@ const styles = StyleSheet.create({
     color: "red",
     marginLeft: width * 0.02,
   },
+  modalBackground: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
+  },
+  modalContainer: {
+    width: "80%",
+    backgroundColor: "#fff",
+    padding: 20,
+    borderRadius: 10,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    padding: 10,
+    borderRadius: 8,
+    marginBottom: 15,
+  },
+  confirmButton: {
+    backgroundColor: "red",
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 10,
+  },
+  confirmText: {
+    color: "#fff",
+    textAlign: "center",
+    fontWeight: "bold",
+  },
+  cancelButton: {
+    padding: 12,
+    borderRadius: 8,
+  },
+  cancelText: {
+    textAlign: "center",
+    color: "blue",
+  },
+  passwordContainer: {
+  width: "100%",
+  position: "relative",
+  marginVertical: 10,
+},
+
+passwordInput: {
+  width: "100%",
+  paddingVertical: 10,
+  paddingHorizontal: 40, // add right padding to make space for eye icon
+  borderWidth: 1,
+  borderColor: "#ccc",
+  borderRadius: 8,
+},
+
+eyeIcon: {
+  position: "absolute",
+  right: 10,
+  top: "50%",
+  transform: [{ translateY: -12 }], // center icon vertically
+},
+
 });

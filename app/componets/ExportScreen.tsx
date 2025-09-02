@@ -13,6 +13,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { exportTransactionsAsPDF } from "../utils/exportToPDF";
 import NavigationBarManager from "./NavigationBarManager";
 import { useRouter } from "expo-router";
+import { NetworkProvider } from "../utils/NetworkProvider";
 
 const { width } = Dimensions.get("window");
 
@@ -50,6 +51,7 @@ const ExportScreen = () => {
   };
 
   return (
+    <NetworkProvider>
     <View style={styles.container}>
       <StatusBar backgroundColor="black" barStyle="light-content" />
       <NavigationBarManager />
@@ -133,6 +135,7 @@ const ExportScreen = () => {
         )}
       </TouchableOpacity>
     </View>
+    </NetworkProvider>
   );
 };
 

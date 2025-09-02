@@ -120,7 +120,7 @@ export const exportTransactionsAsPDF = async (
         runningBalance += t.type === "Credit" ? amount : -amount;
 
         return `
-          <tr>
+          <tr>  
             <td>${index + 1}</td>
             <td>${t.date}</td>
             <td>${t.sourceOrItem}</td>
