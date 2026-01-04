@@ -15,7 +15,7 @@ const { width } = Dimensions.get("window");
 const Disclaimer = () => {
   return (
     <View style={styles.container}>
-      <StatusBar backgroundColor="black" barStyle="light-content" />
+     <StatusBar backgroundColor="black" barStyle="light-content" />
       <NavigationBarManager />
 
       {/* Header */}

@@ -6,7 +6,7 @@ import { NetworkProvider } from '../utils/NetworkProvider'
 export default function Layout() {
   return (
     <NetworkProvider>
-      <StatusBar backgroundColor="black" barStyle="light-content" />
+     <StatusBar backgroundColor="black" barStyle="light-content" />
       <Tabs
         screenOptions={{
           headerShown: false,

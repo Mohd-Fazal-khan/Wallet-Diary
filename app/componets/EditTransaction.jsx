@@ -117,7 +117,7 @@ const EditTransaction = () => {
   return (
     <NetworkProvider>
     <SafeAreaView style={{ flex: 1,backgroundColor:'white'}}>
-      <StatusBar backgroundColor="black" barStyle="light-content" />
+     <StatusBar backgroundColor="black" barStyle="light-content" />
       <NavigationBarManager />
 
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

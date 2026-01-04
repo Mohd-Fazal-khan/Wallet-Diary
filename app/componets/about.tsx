@@ -17,7 +17,6 @@ const About = () => {
     <View style={styles.container}>
       <StatusBar backgroundColor="black" barStyle="light-content" />
       <NavigationBarManager />
-
       <View style={styles.header}>
         <View style={styles.headerContent}>
           <View style={styles.logoWrapper}>

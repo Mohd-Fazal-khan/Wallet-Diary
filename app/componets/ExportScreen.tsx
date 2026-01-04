@@ -53,7 +53,7 @@ const ExportScreen = () => {
   return (
     <NetworkProvider>
     <View style={styles.container}>
-      <StatusBar backgroundColor="black" barStyle="light-content" />
+     <StatusBar backgroundColor="black" barStyle="light-content" />
       <NavigationBarManager />
       <Text style={styles.title}>Export Options</Text>
 

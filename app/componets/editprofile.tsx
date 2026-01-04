@@ -33,27 +33,26 @@ const Editprofile = () => {
 
   const user = auth.currentUser;
 
-useEffect(() => {
-  const fetchUserInfo = async () => {
-    try {
-      if (!user) return;
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        if (!user) return;
 
-      const userDocRef = doc(db, "users", user.uid);
-      const userSnapshot = await getDoc(userDocRef);
+        const userDocRef = doc(db, "users", user.uid);
+        const userSnapshot = await getDoc(userDocRef);
 
-      if (userSnapshot.exists()) {
-        const data = userSnapshot.data();
-        setUsername(data.username || ""); // ✅ Correct Firestore field
-        setProfileImage(data.profileImage || null);
+        if (userSnapshot.exists()) {
+          const data = userSnapshot.data();
+          setUsername(data.username || ""); // ✅ Correct Firestore field
+          setProfileImage(data.profileImage || null);
+        }
+      } catch (error) {
+        console.error("Error fetching user info:", error);
       }
-    } catch (error) {
-      console.error("Error fetching user info:", error);
-    }
-  };
+    };
 
-  fetchUserInfo();
-}, [user]);
-
+    fetchUserInfo();
+  }, [user]);
 
   const uploadImageToCloudinary = async (imageUri) => {
     const formData = new FormData();
@@ -123,8 +122,7 @@ useEffect(() => {
 
       await updateProfile(user, { displayName: username });
       const userDocRef = doc(db, "users", user.uid);
-     await updateDoc(userDocRef, { username: username }); // ✅ Update Firestore username
-
+      await updateDoc(userDocRef, { username: username }); // ✅ Update Firestore username
 
       Alert.alert("Success", "Profile updated successfully!");
       router.replace("/tabs/home");
@@ -137,63 +135,61 @@ useEffect(() => {
   };
 
   return (
-     <NetworkProvider>
+    <NetworkProvider>
+      <SafeAreaView style={{ flex: 1, backgroundColor: "#f0f4f8" }}>
+       <StatusBar backgroundColor="black" barStyle="light-content" />   
+        <NavigationBarManager />
+        <ScrollView
+          contentContainerStyle={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            padding: width * 0.05,
+          }}
+        >
+          <View style={styles.card}>
+            <TouchableOpacity onPress={pickImage} style={styles.imageContainer}>
+              <Image
+                style={styles.img}
+                source={
+                  profileImage
+                    ? { uri: profileImage }
+                    : require("../../assets/images/user.png")
+                }
+              />
+              <View style={styles.cameraIcon}>
+                <Ionicons name="camera" size={width * 0.05} color="#ffffff" />
+              </View>
+            </TouchableOpacity>
 
-  
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#f0f4f8" }}>
-      <StatusBar backgroundColor="black" barStyle="light-content" />
-      <NavigationBarManager />
-      <ScrollView
-        contentContainerStyle={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          padding: width * 0.05,
-        }}
-      >
-        <View style={styles.card}>
-          <TouchableOpacity onPress={pickImage} style={styles.imageContainer}>
-            <Image
-              style={styles.img}
-              source={
-                profileImage
-                  ? { uri: profileImage }
-                  : require("../../assets/images/user.png")
-              }
+            <Text style={styles.title}>Edit Profile</Text>
+
+            <Text style={styles.label}>Username</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter your username"
+              value={username}
+              onChangeText={setUsername}
             />
-            <View style={styles.cameraIcon}>
-              <Ionicons name="camera" size={width * 0.05} color="#ffffff" />
-            </View>
-          </TouchableOpacity>
 
-          <Text style={styles.title}>Edit Profile</Text>
+            <Text style={styles.label}>Email (Not Editable)</Text>
+            <Text style={styles.emailField}>{user?.email}</Text>
 
-          <Text style={styles.label}>Username</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter your username"
-            value={username}
-            onChangeText={setUsername}
-          />
-
-          <Text style={styles.label}>Email (Not Editable)</Text>
-          <Text style={styles.emailField}>{user?.email}</Text>
-
-          <TouchableOpacity
-            style={styles.saveButton}
-            onPress={handleUpdate}
-            disabled={loading}
-          >
-            {loading ? (
-              <ActivityIndicator color="white" />
-            ) : (
-              <Text style={styles.saveText}>Save Changes</Text>
-            )}
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-       </NetworkProvider>
+            <TouchableOpacity
+              style={styles.saveButton}
+              onPress={handleUpdate}
+              disabled={loading}
+            >
+              {loading ? (
+                <ActivityIndicator color="white" />
+              ) : (
+                <Text style={styles.saveText}>Save Changes</Text>
+              )}
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    </NetworkProvider>
   );
 };
 

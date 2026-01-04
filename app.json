@@ -2,7 +2,7 @@
   "expo": {
     "name": "Wallet Diary",
     "slug": "Expense-Manger",
-    "version": "1.0.0",
+    "version": "1.0.3",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "expensemanger",
@@ -14,7 +14,8 @@
     "newArchEnabled": true,
     "jsEngine": "hermes",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "buildNumber": "2"
     },
     "android": {
       "adaptiveIcon": {
@@ -22,7 +23,8 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": false,
-      "package": "com.fazalkhan123.walletdiary"
+      "package": "com.fazalkhan123.walletdiary",
+      "versionCode": 4
     },
     "androidNavigationBar": {
       "barStyle": "light-content",

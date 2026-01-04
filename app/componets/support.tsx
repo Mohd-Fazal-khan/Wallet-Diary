@@ -15,7 +15,8 @@ const { width } = Dimensions.get("window");
 const Support = () => {
   return (
     <View style={styles.container}>
-      <StatusBar backgroundColor="black" barStyle="light-content" />
+     <StatusBar backgroundColor="black" barStyle="light-content" />
+
       <NavigationBarManager />
       <View style={styles.header}>
         <View style={styles.headerContent}>
